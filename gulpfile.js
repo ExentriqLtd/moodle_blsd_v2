@@ -63,7 +63,7 @@ if (BuildBehatPluginTask.isBehatConfigured()) {
 gulp.task(
     'default',
     gulp.parallel([
-        'lang',
+        // 'lang',
         'env',
         'icons',
         ...(BuildBehatPluginTask.isBehatConfigured() ? ['behat'] : [])
