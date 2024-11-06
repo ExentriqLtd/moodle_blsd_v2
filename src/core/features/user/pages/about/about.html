@@ -131,7 +131,7 @@
                 <core-user-profile-field *ngFor="let field of user.customfields" [field]="field" contextLevel="course"
                     [contextInstanceId]="courseId" [courseId]="courseId" />
             </ion-item-group>
-            <ion-item-group>
+            <ion-item-group *ngIf="canChangeProfilePicture">
                 <ion-item-divider><ion-label>
                         <h2>{{ 'core.usercancellation' | translate}}</h2>
                     </ion-label></ion-item-divider>
