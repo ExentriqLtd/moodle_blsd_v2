@@ -1,4 +1,5 @@
-// (C) Copyright 2015 Moodle Pty Ltd.
+
+        // Check if it's a URL.// (C) Copyright 2015 Moodle Pty Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -163,6 +164,13 @@ export class CoreMainMenuMorePage implements OnInit, OnDestroy {
                 displayCopyButton: true,
             });
         }
+    }
+
+    /**
+     * Open settings.
+     */
+    openLanguageSettings(): void {
+        CoreNavigator.navigateToSitePath('settings/general');
     }
 
 }
