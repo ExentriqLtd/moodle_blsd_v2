@@ -45,7 +45,7 @@
     "forceLoginLogo": false,
     "ioswebviewscheme": "moodleappfs",
     "appstores": {
-        "android": "com.moodle.moodlemobile",
+        "android": "isda.exentriq.com",
         "ios": "id633359593"
     },
     "wsrequestqueuelimit": 10,
