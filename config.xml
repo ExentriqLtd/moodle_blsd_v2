@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="1" id="isda.exentriq.com" ios-CFBundleVersion="3.0.0" version="3.0.0" versionCode="1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-     <name>ISDA E-Learning</name>
-    <description>ISDA E-Learning official app</description>
+<widget android-versionCode="1" id="blsd.exentriq.com" ios-CFBundleVersion="3.0.0" version="3.0.0" versionCode="1" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>BLSD School</name>
+    <description>BLSD School official app</description>
     <author email="info@exentriq.com" href="http://www.exentriq.com">Exentriq Ltd</author>
     <content src="index.html" />
     <access origin="*" />

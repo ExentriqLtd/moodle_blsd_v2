@@ -1,6 +1,6 @@
 {
-    "app_id": "isda.exentriq.com",
-    "appname": "ISDA E-Learning",
+    "app_id": "blsd.exentriq.com",
+    "appname": "BLSD School",
     "versioncode": 1,
     "versionname": "3.0.0",
     "cache_update_frequency_usually": 420000,
@@ -29,8 +29,8 @@
     "customurlscheme": "moodlemobile",
     "sites": [
         {
-            "name": "ISDA E-Learning School",
-            "url": "https://isdaelearning.com/"
+            "name": "BLSD School",
+            "url": "https://www.blsdschool.com/"
         }
     ],
     "multisitesdisplay": "",
@@ -38,7 +38,7 @@
     "onlyallowlistedsites": true,
     "skipssoconfirmation": false,
     "forcedefaultlanguage": false,
-    "privacypolicy": "https://www.isdaelearning.com/static/privacypolicy.html",
+    "privacypolicy":"https://www.blsdschool.com//static/privacypolicy.html",
     "notificoncolor": "#f98012",
     "enableanalytics": false,
     "enableonboarding": true,
@@ -46,7 +46,7 @@
     "forceLoginLogo": false,
     "ioswebviewscheme": "moodleappfs",
     "appstores": {
-        "android": "isda.exentriq.com",
+        "android": "blsd.exentriq.com",
         "ios": "id633359593"
     },
     "wsrequestqueuelimit": 10,
