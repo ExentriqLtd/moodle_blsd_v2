@@ -69,6 +69,8 @@ import { CoreErrorHelper } from '@services/error-helper';
 export class CoreLoginHelperProvider {
 
     protected static readonly PASSWORD_RESETS_CONFIG_KEY = 'password-resets';
+    static readonly FAQ_URL_IMAGE_HTML = '<img src="assets/img/login/faq_url.png" role="presentation" alt="">';
+    static readonly FAQ_QRCODE_IMAGE_HTML = '<img src="assets/img/login/faq_qrcode.png" role="presentation" alt="">';
 
     private static readonly APP_UNSUPPORTED_ERRORS = [
         'loginfailed',

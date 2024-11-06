@@ -190,7 +190,7 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
                     this.siteHomeId,
                     undefined,
                     undefined,
-                    this.currentSite.getInfo()?.sitename,
+                    // this.currentSite.getInfo()?.sitename,
                 ));
             }
         } catch (error) {

@@ -136,11 +136,11 @@ ion-card.core-course-list-item {
         @include margin-horizontal(null, 32px);
     }
 
-    @if ($core-course-hide-progress-on-list-items) {
-        .core-course-progress {
-            display: none;
-        }
-    }
+    // @if ($core-course-hide-progress-on-list-items) {
+    //     .core-course-progress {
+    //         display: none;
+    //     }
+    // }
 }
 
 // Fill geopaterns

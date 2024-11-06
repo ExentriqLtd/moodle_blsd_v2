@@ -24,28 +24,28 @@
     line-height: var(--size);
 
     &.colorize {
-        &.version_current {
-            @each $type, $value in $activity-icon-color-filters {
-                &.#{$type}:not(.branded) {
-                    img {
-                        filter: var(--activity#{$type});
-                    }
-                }
-            }
-        }
+        // &.version_current {
+        //     @each $type, $value in $activity-icon-color-filters {
+        //         &.#{$type}:not(.branded) {
+        //             img {
+        //                 filter: var(--activity#{$type});
+        //             }
+        //         }
+        //     }
+        // }
 
-        &.version_40 {
-            background-color: var(--gray-100);
+        // &.version_40 {
+        //     background-color: var(--gray-100);
 
-            @each $type, $value in $activity-icon-background-colors {
-                &.#{$type}:not(.branded) {
-                    background-color: var(--activity-40-#{$type});
-                    img {
-                        filter: brightness(0) invert(1);
-                    }
-                }
-            }
-        }
+        //     @each $type, $value in $activity-icon-background-colors {
+        //         &.#{$type}:not(.branded) {
+        //             background-color: var(--activity-40-#{$type});
+        //             img {
+        //                 filter: brightness(0) invert(1);
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     &.version_40,

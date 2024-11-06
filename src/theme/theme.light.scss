@@ -224,14 +224,14 @@
     }
 
     // Make activtity colours available for custom modules.
-    @each $type, $value in $activity-icon-color-filters {
-        --activity#{$type}: #{$value};
-    }
+    // @each $type, $value in $activity-icon-color-filters {
+    //     --activity#{$type}: #{$value};
+    // }
 
     // Make activtity colours available for custom modules.
-    @each $type, $value in $activity-icon-background-colors {
-        --activity-40-#{$type}: #{$value};
-    }
+    // @each $type, $value in $activity-icon-background-colors {
+    //     --activity-40-#{$type}: #{$value};
+    // }
 
     --rte-editor-background: var(--core-input-background);
 }
