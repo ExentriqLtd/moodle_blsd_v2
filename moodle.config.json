@@ -10,13 +10,14 @@
     "default_lang": "en",
     "languages": {
         "ar": "عربي",
-        "de": "Deutsch",
         "en": "English",
         "es": "Español",
         "fr": "Français",
         "it": "Italiano",
         "pt": "Português - Portugal",
-        "ru": "Русский"
+        "ru": "Русский",
+        "th": "Thai",
+        "de": "Deutschland"
     },
     "wsservice": "moodle_mobile_app",
     "defaultZoomLevel": "none",
