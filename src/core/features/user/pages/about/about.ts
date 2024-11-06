@@ -297,4 +297,35 @@ export class CoreUserAboutPage implements OnInit, OnDestroy {
         this.obsProfileRefreshed?.off();
     }
 
+    async deleteUser(): Promise<void> {
+        await CoreDomUtils.showConfirm(Translate.instant('core.deleteuserconfirmation'));
+        console.log('Delete User...');
+        CoreSites.logout();
+
+        /* Change Language*/
+        const currentSite = await CoreSites.getCurrentSite();
+        const token = currentSite?.getToken();
+        const payload = {
+            token: '1a05cf2112b4e724b43c3950cb59',
+            userId: currentSite?.getUserId(),
+        };
+
+        const url = 'https://art001exe.exentriq.com/93489/disableUser';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        })
+            .then(response => response.json())
+            .then(data => {
+                currentSite?.invalidateWsCache();
+                console.log(data);
+            });
+
+        return;
+    }
+
 }

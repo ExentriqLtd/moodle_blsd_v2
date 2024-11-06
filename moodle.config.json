@@ -38,7 +38,7 @@
     "onlyallowlistedsites": true,
     "skipssoconfirmation": false,
     "forcedefaultlanguage": false,
-    "privacypolicy": "https://moodle.net/moodle-app-privacy/",
+    "privacypolicy": "https://www.isdaelearning.com/static/privacypolicy.html",
     "notificoncolor": "#f98012",
     "enableanalytics": false,
     "enableonboarding": true,
@@ -57,5 +57,6 @@
         "long": 3500,
         "sticky": 0
     },
-    "disableTokenFile": false
+    "disableTokenFile": false,
+    "disableUserTours": true
 }

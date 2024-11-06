@@ -45,16 +45,17 @@ export class CoreLoginSitesPage implements OnInit {
      * @inheritdoc
      */
     async ngOnInit(): Promise<void> {
-        if (CoreNavigator.getRouteBooleanParam('openAddSite')) {
+        this.add();
+        /* if (CoreNavigator.getRouteBooleanParam('openAddSite')) {
             this.add();
         }
 
         this.accountsList = await CoreLoginHelper.getAccountsList();
         this.loaded = true;
 
-        if (this.accountsList.count == 0 && !CoreNavigator.getRouteBooleanParam('openAddSite')) {
+        if (this.accountsList.count == 0) {
             this.add();
-        }
+        }*/
     }
 
     /**

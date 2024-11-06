@@ -131,6 +131,15 @@
                 <core-user-profile-field *ngFor="let field of user.customfields" [field]="field" contextLevel="course"
                     [contextInstanceId]="courseId" [courseId]="courseId" />
             </ion-item-group>
+            <ion-item-group>
+                <ion-item-divider><ion-label>
+                        <h2>{{ 'core.usercancellation' | translate}}</h2>
+                    </ion-label></ion-item-divider>
+                <ion-button expand="block" (click)="deleteUser()">
+                    <ion-icon name="fas-trash" aria-hidden="true"></ion-icon>
+                    {{ 'core.deleteuser' | translate}}
+                </ion-button>
+            </ion-item-group>
         </ion-list>
 
         <core-empty-box *ngIf="!user || (!hasContact && !hasDetails && !user.description)" icon="fas-user"
