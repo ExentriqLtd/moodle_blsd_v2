@@ -7,7 +7,7 @@
             <h1>{{ 'core.badges' | translate }}</h1>
         </ion-title>
         <ion-buttons slot="end">
-            <ion-button fill="clear" (click)="closeHelp()">
+            <ion-button fill="clear" (click)="closeHelp()" [attr.aria-label]="close">
                 {{ 'core.close' | translate }}
             </ion-button>
         </ion-buttons>
