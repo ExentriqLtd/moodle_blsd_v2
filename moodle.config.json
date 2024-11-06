@@ -38,7 +38,7 @@
     "onlyallowlistedsites": true,
     "skipssoconfirmation": false,
     "forcedefaultlanguage": false,
-    "privacypolicy":"https://www.blsdschool.com//static/privacypolicy.html",
+    "privacypolicy": "https://www.blsdschool.com/static/privacypolicy.html",
     "notificoncolor": "#f98012",
     "enableanalytics": false,
     "enableonboarding": true,
