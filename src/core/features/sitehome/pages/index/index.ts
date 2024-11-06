@@ -13,10 +13,12 @@
 // limitations under the License.
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { IonRefresher } from '@ionic/angular';
+import { Params } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { CoreSite, CoreSiteConfig } from '@classes/sites/site';
-import { CoreCourse, CoreCourseWSSection, sectionContentIsModule } from '@features/course/services/course';
+import { CoreCourse, CoreCourseWSSection } from '@features/course/services/course';
 import { CoreDomUtils } from '@services/utils/dom';
 import { CoreSites } from '@services/sites';
 import { CoreSiteHome } from '@features/sitehome/services/sitehome';
@@ -28,10 +30,9 @@ import { CoreCourseModulePrefetchDelegate } from '@features/course/services/modu
 import { CoreNavigationOptions, CoreNavigator } from '@services/navigator';
 import { CoreBlockHelper } from '@features/block/services/block-helper';
 import { CoreUtils } from '@services/utils/utils';
-import { CoreTime } from '@singletons/time';
-import { CoreAnalytics, CoreAnalyticsEventType } from '@services/analytics';
-import { ContextLevel } from '@/core/constants';
-import { CoreModals } from '@services/modals';
+import { CoreLoginSiteBadgesComponent } from '@features/sitehome/pages/index/site-pages/site-badges';
+import { Translate } from '@singletons';
+import { CoreLang } from '@services/lang';
 
 /**
  * Page that displays site home index.
@@ -48,6 +49,8 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
         hasContent?: boolean;
     };
 
+    couponForm!: FormGroup;
+	instructorForm!: FormGroup;
     hasContent = false;
     hasBlocks = false;
     items: string[] = [];
@@ -55,28 +58,15 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
     currentSite!: CoreSite;
     searchEnabled = false;
     newsForumModule?: CoreCourseModuleData;
-    isModule = sectionContentIsModule;
 
     protected updateSiteObserver: CoreEventObserver;
-    protected logView: () => void;
+    protected fetchSuccess = false;
 
-    constructor(protected route: ActivatedRoute) {
+    constructor(protected fb: FormBuilder) {
         // Refresh the enabled flags if site is updated.
         this.updateSiteObserver = CoreEvents.on(CoreEvents.SITE_UPDATED, () => {
             this.searchEnabled = !CoreCourses.isSearchCoursesDisabledInSite();
         }, CoreSites.getCurrentSiteId());
-
-        this.logView = CoreTime.once(async () => {
-            await CoreUtils.ignoreErrors(CoreCourse.logView(this.siteHomeId));
-
-            CoreAnalytics.logEvent({
-                type: CoreAnalyticsEventType.VIEW_ITEM,
-                ws: 'core_course_view_course',
-                name: this.currentSite.getInfo()?.sitename ?? '',
-                data: { id: this.siteHomeId, category: 'course' },
-                url: '/?redirect=0',
-            });
-        });
     }
 
     /**
@@ -85,22 +75,65 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.searchEnabled = !CoreCourses.isSearchCoursesDisabledInSite();
 
+        this.couponForm = this.fb.group({
+            coursecode: ['', Validators.required],
+        });
+
+        this.instructorForm = this.fb.group({
+            courseinstructor: ['', Validators.required],
+        });
+
         this.currentSite = CoreSites.getRequiredCurrentSite();
         this.siteHomeId = CoreSites.getCurrentSiteHomeId();
 
+        // Disable Step 1
+        // eslint-disable-next-line max-len, no-console
+        console.log('0....CoreBlockDelegate_AddonBlockFeedback --> ' + this.currentSite.isFeatureDisabled('CoreBlockDelegate_AddonBlockFeedback'));
+        if(this.currentSite.isFeatureDisabled('CoreBlockDelegate_AddonBlockFeedback')){
+            const step1Native = document.querySelector<HTMLElement>('#step1native');
+            if(step1Native) {step1Native.style.display = 'none';}
+        }
+
+        // Init Lang
+        CoreLang.getCurrentLanguage().then((lang) => {
+            console.log('0...Init Lang ', lang);
+            const token = this.currentSite?.getToken();
+            const payload = {
+                token,
+                lang,
+                userId: this.currentSite?.getUserId(),
+            };
+            const url = 'https://art001exe.exentriq.com/93489/updateLanguage';
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Update Language ',lang);
+                });
+        });
+
         const module = CoreNavigator.getRouteParam<CoreCourseModuleData>('module');
         if (module) {
-            const modNavOptions = CoreNavigator.getRouteParam<CoreNavigationOptions>('modNavOptions');
+            let modNavOptions = CoreNavigator.getRouteParam<CoreNavigationOptions>('modNavOptions');
+            if (!modNavOptions) {
+                // Fallback to old way of passing params. @deprecated since 4.0.
+                const modParams = CoreNavigator.getRouteParam<Params>('modParams');
+                if (modParams) {
+                    modNavOptions = { params: modParams };
+                }
+            }
             CoreCourseHelper.openModule(module, this.siteHomeId, { modNavOptions });
         }
 
         this.loadContent().finally(() => {
             this.dataLoaded = true;
         });
-
-        this.openFocusedInstance();
-
-        this.route.queryParams.subscribe(() => this.openFocusedInstance());
     }
 
     /**
@@ -151,7 +184,15 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
                 this.hasContent = result.hasContent || this.hasContent;
             }
 
-            this.logView();
+            if (!this.fetchSuccess) {
+                this.fetchSuccess = true;
+                CoreUtils.ignoreErrors(CoreCourse.logView(
+                    this.siteHomeId,
+                    undefined,
+                    undefined,
+                    this.currentSite.getInfo()?.sitename,
+                ));
+            }
         } catch (error) {
             CoreDomUtils.showErrorModalDefault(error, 'core.course.couldnotloadsectioncontent', true);
         }
@@ -164,7 +205,7 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
      *
      * @param refresher Refresher.
      */
-    doRefresh(refresher?: HTMLIonRefresherElement): void {
+    doRefresh(refresher?: IonRefresher): void {
         const promises: Promise<unknown>[] = [];
 
         promises.push(CoreCourse.invalidateSections(this.siteHomeId));
@@ -178,12 +219,9 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
 
         promises.push(CoreCourse.invalidateCourseBlocks(this.siteHomeId));
 
-        if (this.section?.contents.length) {
+        if (this.section && this.section.modules) {
             // Invalidate modules prefetch data.
-            promises.push(CoreCourseModulePrefetchDelegate.invalidateModules(
-                CoreCourse.getSectionsModules([this.section]),
-                this.siteHomeId,
-            ));
+            promises.push(CoreCourseModulePrefetchDelegate.invalidateModules(this.section.modules, this.siteHomeId));
         }
 
         Promise.all(promises).finally(async () => {
@@ -229,24 +267,223 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
     }
 
     /**
-     * Check whether there is a focused instance in the page parameters and open it.
+     * Validate coupon.
      */
-    private async openFocusedInstance() {
-        const blockInstanceId = CoreNavigator.getRouteNumberParam('blockInstanceId');
-        if (!blockInstanceId) {
-            return;
-        }
+    async validateCoupon(e?: Event): Promise<void> {
 
-        const { CoreBlockSideBlocksComponent } = await import('@features/block/components/side-blocks/side-blocks');
+	    const step1 = document.querySelector<HTMLElement>('#step1native');
+        if(step1 != null)
+        {step1.style.display = 'none';}
 
-        CoreModals.openSideModal({
-            component: CoreBlockSideBlocksComponent,
-            componentProps: {
-                contextLevel: ContextLevel.COURSE,
-                instanceId: this.siteHomeId,
-                initialBlockInstanceId: blockInstanceId,
+	    const coursecode = this.couponForm.value.coursecode;
+
+	    const url = 'https://art001exe.exentriq.com/93489/isValidCode?code=' + coursecode.replace('-','') + '&rand=' + new Date().getTime();
+
+        const modal = await CoreDomUtils.showModalLoading();
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
             },
-        });
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                modal.dismiss();
+
+                if(data.valid){
+
+                    window['courseId'] = data.id;
+                    window['couponId'] = data.coupon;
+
+                    const step2 = document.querySelector<HTMLElement>('#step2native');
+                    if(step2 != null)
+                    {step2.style.display = 'block';}
+
+                    const courseLabel = document.querySelector<HTMLElement>('#course-label-name-native');
+                    if(courseLabel != null)
+                    {courseLabel.innerHTML = data.title;}
+
+                }else{
+                    CoreDomUtils.showErrorModal(Translate.instant('core.course.not_valid'));
+                    if(step1 != null)
+                    {step1.style.display = 'block';}
+                }
+
+            });
+
     }
+
+    /**
+     * Validate instructor.
+     */
+    async validateInstructor(e?: Event): Promise<void> {
+
+	    const step2 = document.querySelector<HTMLElement>('#step2native');
+        if(step2 != null)
+        {step2.style.display = 'none';}
+
+	    const courseinstructor = this.instructorForm.value.courseinstructor;
+
+	    const url = 'https://art001exe.exentriq.com/93489/isValidTeacher?code=' + courseinstructor + '&course=' + window['courseId'] + '&rand=' + new Date().getTime();
+
+	    const modal = await CoreDomUtils.showModalLoading();
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                modal.dismiss();
+
+                if(data.valid){
+                    window['dataTeacher'] = data;
+                    const step3 = document.querySelector<HTMLElement>('#step3native');
+                    if(step3 != null)
+                    {step3.style.display = 'block';}
+
+                    const courseTeacherName = document.querySelector<HTMLInputElement>('#course-teacher-name-native');
+                    if(courseTeacherName != null)
+                    {courseTeacherName.innerHTML = data.name;}
+
+                }else{
+                    CoreDomUtils.showErrorModal(Translate.instant('core.course.not_valid'));
+                    if(step2 != null)
+                    {step2.style.display = 'block';}
+                }
+
+            });
+
+    }
+
+    /**
+     * Validate instructor.
+     */
+    async confirmCourse(e?: Event): Promise<void> {
+
+	    const step3 = document.querySelector<HTMLElement>('#step3native');
+        if(step3 != null)
+        {step3.style.display = 'none';}
+
+	    const teacherId = window['dataTeacher'].id;
+        const teacherName = encodeURIComponent(window['dataTeacher'].name);
+
+        let studentId = '';
+        const verify_code_nr = document.querySelector<HTMLElement>('.verify_code_nr');
+        if(verify_code_nr != null)
+        	{studentId = verify_code_nr.attributes['data-id'].value;};
+
+        const couponId = window['couponId'];
+
+        const courseCode = this.couponForm.value.coursecode;
+
+	    const url = 'https://art001exe.exentriq.com/93489/enrol?teacherId=' + teacherId + '&teacherName=' + teacherName + '&courseId=' + window['courseId'] + '&studentId=' + studentId + '&couponId=' + couponId + '&courseCode=' + courseCode + '&rand=' + new Date().getTime();
+
+	    const modal = await CoreDomUtils.showModalLoading();
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                modal.dismiss();
+
+                if(data.status == 'success'){
+
+                    const step3 = document.querySelector<HTMLElement>('#step2native');
+                    if(step3 != null)
+                    {step3.style.display = 'block';}
+
+                    CoreCourseHelper.getCourse(data.courseId).then(result => {
+
+                        CoreCourseHelper.openCourse(result.course);
+                        CoreUtils.ignoreErrors(CoreCourses.invalidateUserCourses());
+
+                        window['courseId'] = null;
+                        window['couponId'] = null;
+                        this.couponForm.value.coursecode = '';
+                        this.couponForm.get('coursecode')?.setValue('');
+
+                        this.instructorForm.value.courseinstructor = '';
+                        this.instructorForm.get('courseinstructor')?.setValue('');
+
+                        const step1 = document.querySelector<HTMLElement>('#step1native');
+                        if(step1 != null)
+                        {step1.style.display = 'block';}
+
+                        const step2 = document.querySelector<HTMLElement>('#step2native');
+                        if(step2 != null)
+                        {step2.style.display = 'none';}
+
+                    });
+
+                }else{
+                    CoreDomUtils.showErrorModal(Translate.instant('core.course.course_server_error'));
+
+                }
+
+            });
+
+    }
+
+    /**
+     * Open settings.
+     */
+    changeCode(): void {
+        window['courseId'] = null;
+        window['couponId'] = null;
+
+        const step1 = document.querySelector<HTMLElement>('#step1native');
+        if(step1 != null)
+        {step1.style.display = 'block';}
+
+        const step2 = document.querySelector<HTMLElement>('#step2native');
+        if(step2 != null)
+        {step2.style.display = 'none';}
+
+        const step3 = document.querySelector<HTMLElement>('#step3native');
+        if(step3 != null)
+        {step3.style.display = 'none';}
+
+        this.couponForm.value.coursecode = '';
+        this.couponForm.get('coursecode')?.setValue('');
+
+        this.instructorForm.value.courseinstructor = '';
+        this.instructorForm.get('courseinstructor')?.setValue('');
+
+        const invcourse = document.querySelector<HTMLElement>('.invalid-course');
+        if(invcourse != null)
+        {invcourse.style.display = 'none';}
+
+        const invteacher = document.querySelector<HTMLElement>('.invalid-teacher');
+        if(invteacher != null)
+        {invteacher.style.display = 'none';}
+
+        const courseTeacher = document.querySelector<HTMLInputElement>('#course-teacher');
+        if(courseTeacher != null)
+        {courseTeacher.style.display = 'none';}
+
+    }
+
+    async showBadgesNative(): Promise<void> {
+
+        const contentModal = await CoreDomUtils.openModal({
+    		component: CoreLoginSiteBadgesComponent,
+    		cssClass: 'core-modal-fullscreen',
+        });
+
+	 }
 
 }

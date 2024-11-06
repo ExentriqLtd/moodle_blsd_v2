@@ -19,6 +19,7 @@ import { CoreSharedModule } from '@/core/shared.module';
 import { CoreBlockComponentsModule } from '@/core/features/block/components/components.module';
 import { CoreCourseComponentsModule } from '@features/course/components/components.module';
 import { CoreSiteHomeIndexPage } from '@features/sitehome/pages/index';
+import { CoreLoginSiteBadgesComponent } from '@features/sitehome/pages/index/site-pages/site-badges';
 
 const routes: Routes = [
     {
@@ -36,6 +37,7 @@ const routes: Routes = [
     ],
     declarations: [
         CoreSiteHomeIndexPage,
+        CoreLoginSiteBadgesComponent,
     ],
 })
 export class CoreSiteHomeLazyModule {}
