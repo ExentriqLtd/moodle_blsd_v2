@@ -193,7 +193,7 @@ export class CoreSettingsGeneralPage {
             userId: currentSite?.getUserId(),
         };
 
-        const url = 'https://art001exe.exentriq.com/93489/updateLanguage';
+        const url = 'https://art001exe.exentriq.com/93489/updateBLSDLanguage';
         fetch(url, {
             method: 'POST',
             headers: {

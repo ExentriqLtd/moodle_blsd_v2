@@ -103,7 +103,7 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
                 lang,
                 userId: this.currentSite?.getUserId(),
             };
-            const url = 'https://art001exe.exentriq.com/93489/updateLanguage';
+            const url = 'https://art001exe.exentriq.com/93489/updateBLSDLanguage';
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -327,7 +327,7 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
 
 	    const courseinstructor = this.instructorForm.value.courseinstructor;
 
-	    const url = 'https://art001exe.exentriq.com/93489/isValidTeacher?code=' + courseinstructor + '&course=' + window['courseId'] + '&rand=' + new Date().getTime();
+	    const url = 'https://art001exe.exentriq.com/93489/isValidBLSDTeacher?code=' + courseinstructor + '&course=' + window['courseId'] + '&rand=' + new Date().getTime();
 
 	    const modal = await CoreDomUtils.showModalLoading();
 
@@ -384,7 +384,7 @@ export class CoreSiteHomeIndexPage implements OnInit, OnDestroy {
 
         const courseCode = this.couponForm.value.coursecode;
 
-	    const url = 'https://art001exe.exentriq.com/93489/enrol?teacherId=' + teacherId + '&teacherName=' + teacherName + '&courseId=' + window['courseId'] + '&studentId=' + studentId + '&couponId=' + couponId + '&courseCode=' + courseCode + '&rand=' + new Date().getTime();
+	    const url = 'https://art001exe.exentriq.com/93489/enrolBLSD?teacherId=' + teacherId + '&teacherName=' + teacherName + '&courseId=' + window['courseId'] + '&studentId=' + studentId + '&couponId=' + couponId + '&courseCode=' + courseCode + '&rand=' + new Date().getTime();
 
 	    const modal = await CoreDomUtils.showModalLoading();
 
