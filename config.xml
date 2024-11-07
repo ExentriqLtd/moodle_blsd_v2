@@ -61,6 +61,7 @@
         <preference name="AndroidWindowSplashScreenAnimatedIcon" value="resources/android/android-splash.xml" />
         <preference name="AndroidWindowSplashScreenBackground" value="#FFFFFF" />
         <preference name="AndroidWindowSplashScreenIconBackgroundColor" value="#FFFFFF" />
+        <resource-file src="google-services.json" target="app/google-services.json" />
         <resource-file src="resources/android/icon/drawable-land-hdpi-screen.png" target="app/src/main/res/drawable-land-hdpi/screen.png" />
         <resource-file src="resources/android/icon/drawable-land-ldpi-screen.png" target="app/src/main/res/drawable-land-ldpi/screen.png" />
         <resource-file src="resources/android/icon/drawable-land-mdpi-screen.png" target="app/src/main/res/drawable-land-mdpi/screen.png" />
@@ -96,7 +97,14 @@
         <resource-file src="resources/android/icon/mipmap-xxhdpi-v26-ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxhdpi-v26/ic_launcher_foreground.png" />
         <resource-file src="resources/android/icon/mipmap-xxxhdpi-v26-ic_launcher_background.png" target="app/src/main/res/mipmap-xxxhdpi-v26/ic_launcher_background.png" />
         <resource-file src="resources/android/icon/mipmap-xxxhdpi-v26-ic_launcher_foreground.png" target="app/src/main/res/mipmap-xxxhdpi-v26/ic_launcher_foreground.png" />
+        <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
+        <resource-file src="resources/android/xml/backup_rules.xml" target="app/src/main/res/xml/backup_rules.xml" />
+        <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:allowBackup="true" android:dataExtractionRules="@xml/backup_rules" android:largeHeap="true" android:networkSecurityConfig="@xml/network_security_config" />
+        </edit-config>
         <edit-config file="AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:name='MainActivity']">
+            <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|screenLayout|smallestScreenSize" android:exported="true" />
+        </edit-config>
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="firebase_analytics_collection_deactivated" android:value="true" />
         </config-file>
@@ -135,17 +143,8 @@
         <splash src="resources/ios/splash/Default@2x~universal~anyany.jpg" />
         <splash src="resources/ios/splash/Default@3x~universal~anyany.jpg" />
         <resource-file src="GoogleService-Info.plist" />
-        <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
-            <string>We need your location so you can attach it as part of your submissions.</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
-            <string>We need your location so you can attach it as part of your submissions.</string>
-        </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
-            <string>We need camera access to take pictures so you can attach them as part of your submissions.</string>
-        </edit-config>
-        <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
-            <string>We need microphone access to record sounds so you can attach them as part of your submissions.</string>
+            <string>We need camera access to take pictures so you can use them for changing your profile picture, attach them in your tasks submission and share them with the teachers.</string>
         </edit-config>
         <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
             <string>We need photo library access to get pictures from there so you can attach them as part of your submissions.</string>
